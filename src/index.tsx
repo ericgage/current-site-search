@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { ActionPanel, Action, Form, showToast, Toast, open, Clipboard, KeyboardShortcut } from "@raycast/api";
+import { ActionPanel, Action, List, showToast, Toast, open, Clipboard, Icon, Color, LocalStorage } from "@raycast/api";
 import { runAppleScript } from "run-applescript";
 
-interface FormValues {
+interface SearchHistoryItem {
+  domain: string;
   searchTerm: string;
+  timestamp: number;
 }
 
 export default function Command() {
@@ -11,6 +13,7 @@ export default function Command() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
 
   useEffect(() => {
     async function initialize() {
@@ -37,6 +40,12 @@ export default function Command() {
         const clipboardText = await Clipboard.readText();
         if (clipboardText) {
           setSearchTerm(clipboardText.trim());
+        }
+        
+        // Load search history
+        const historyData = await LocalStorage.getItem<string>("searchHistory");
+        if (historyData) {
+          setSearchHistory(JSON.parse(historyData));
         }
       } catch (error) {
         showToast({
@@ -79,8 +88,11 @@ export default function Command() {
     }
   }
 
-  function handleSubmit(values: FormValues) {
-    if (!domain) {
+  async function performSearch(term?: string, targetDomain?: string) {
+    const searchDomain = targetDomain || domain;
+    const searchQuery = term || searchTerm;
+    
+    if (!searchDomain) {
       showToast({
         style: Toast.Style.Failure,
         title: "No domain detected",
@@ -89,41 +101,134 @@ export default function Command() {
       return;
     }
 
-    // Use the current state value to ensure latest input
-    const termToSearch = values.searchTerm || searchTerm;
-    const encodedTerm = encodeURIComponent(termToSearch);
-    const searchUrl = `https://www.google.com/search?q=${encodedTerm}+site%3A${domain}`;
+    if (!searchQuery.trim()) {
+      showToast({
+        style: Toast.Style.Failure,
+        title: "Empty search",
+        message: "Please enter a search term"
+      });
+      return;
+    }
+
+    // Save to search history
+    const newHistoryItem: SearchHistoryItem = {
+      domain: searchDomain,
+      searchTerm: searchQuery,
+      timestamp: Date.now()
+    };
+
+    // Add to history and remove duplicates
+    const updatedHistory = [
+      newHistoryItem,
+      ...searchHistory.filter(
+        item => !(item.domain === searchDomain && item.searchTerm === searchQuery)
+      )
+    ].slice(0, 20); // Keep only the most recent 20 items
+
+    setSearchHistory(updatedHistory);
+    await LocalStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
+
+    // Perform the search
+    const encodedTerm = encodeURIComponent(searchQuery);
+    const searchUrl = `https://www.google.com/search?q=${encodedTerm}+site%3A${searchDomain}`;
     
     open(searchUrl);
   }
 
+  // Format timestamp for display
+  function formatDate(timestamp: number): string {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+  }
+
   return (
-    <Form
+    <List
       isLoading={isLoading}
+      searchBarPlaceholder="Enter search term..."
+      searchText={searchTerm}
+      onSearchTextChange={setSearchTerm}
+      navigationTitle="Site Search"
       actions={
         <ActionPanel>
-          <Action.SubmitForm 
-            title="Search Site" 
-            onSubmit={handleSubmit} 
-            shortcut={{ modifiers: [], key: "return" }} 
+          <Action
+            title="Search Site"
+            icon={Icon.MagnifyingGlass}
+            shortcut={{ modifiers: [], key: "return" }}
+            onAction={() => performSearch()}
           />
         </ActionPanel>
       }
     >
       {domain && (
-        <Form.Description text={`Searching on: ${domain}`} />
+        <List.Section title={`Searching on: ${domain}`}>
+          <List.Item
+            title={searchTerm ? `Search for "${searchTerm}"` : "Enter a search term"}
+            icon={Icon.MagnifyingGlass}
+            accessories={[
+              { icon: Icon.Return, tooltip: "Press Return to search" }
+            ]}
+            actions={
+              <ActionPanel>
+                <Action
+                  title="Search Site"
+                  icon={Icon.MagnifyingGlass}
+                  onAction={() => performSearch()}
+                  shortcut={{ modifiers: [], key: "return" }}
+                />
+              </ActionPanel>
+            }
+          />
+        </List.Section>
       )}
+
+      {searchHistory.length > 0 && (
+        <List.Section title="Previous Searches">
+          {searchHistory.map((item, index) => (
+            <List.Item
+              key={index}
+              title={item.searchTerm}
+              subtitle={item.domain}
+              icon={Icon.Clock}
+              accessories={[
+                { text: formatDate(item.timestamp), tooltip: "Search date" }
+              ]}
+              actions={
+                <ActionPanel>
+                  <Action
+                    title="Repeat Search"
+                    icon={Icon.MagnifyingGlass}
+                    onAction={() => performSearch(item.searchTerm, item.domain)}
+                  />
+                  <Action
+                    title="Use This Term"
+                    icon={Icon.TextCursor}
+                    onAction={() => {
+                      setSearchTerm(item.searchTerm);
+                    }}
+                  />
+                  <Action
+                    title="Remove from History"
+                    icon={Icon.Trash}
+                    onAction={async () => {
+                      const updatedHistory = searchHistory.filter((_, i) => i !== index);
+                      setSearchHistory(updatedHistory);
+                      await LocalStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
+                    }}
+                  />
+                </ActionPanel>
+              }
+            />
+          ))}
+        </List.Section>
+      )}
+
       {error && (
-        <Form.Description text={`Error: ${error}`} />
+        <List.EmptyView
+          icon={{ source: Icon.ExclamationMark, tintColor: Color.Red }}
+          title="Error"
+          description={error}
+        />
       )}
-      <Form.TextField
-        id="searchTerm"
-        title="Search Term"
-        placeholder="Enter search term..."
-        autoFocus
-        value={searchTerm}
-        onChange={setSearchTerm}
-      />
-    </Form>
+    </List>
   );
 } 
