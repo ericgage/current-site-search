@@ -11,7 +11,39 @@
       "name": "index",
       "title": "Search Current Site",
       "description": "Search the current site open in Arc browser",
-      "mode": "view"
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "searchEngine",
+          "title": "Search Engine",
+          "description": "The search engine to use for site searches",
+          "type": "dropdown",
+          "required": true,
+          "default": "google",
+          "data": [
+            {
+              "title": "Google",
+              "value": "google"
+            },
+            {
+              "title": "DuckDuckGo",
+              "value": "duckduckgo"
+            },
+            {
+              "title": "Bing",
+              "value": "bing"
+            },
+            {
+              "title": "Yahoo",
+              "value": "yahoo"
+            },
+            {
+              "title": "Baidu",
+              "value": "baidu"
+            }
+          ]
+        }
+      ]
     }
   ],
   "dependencies": {

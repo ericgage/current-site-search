@@ -14,7 +14,10 @@ declare type Preferences = ExtensionPreferences
 
 declare namespace Preferences {
   /** Preferences accessible in the `index` command */
-  export type Index = ExtensionPreferences & {}
+  export type Index = ExtensionPreferences & {
+  /** Search Engine - The search engine to use for site searches */
+  "searchEngine": "google" | "duckduckgo" | "bing" | "yahoo" | "baidu"
+}
 }
 
 declare namespace Arguments {
