@@ -1,0 +1,33 @@
+{
+  "name": "arc-site-search",
+  "title": "Arc Site Search",
+  "description": "Search the current site open in Arc browser using Google site search",
+  "icon": "command-icon.png",
+  "author": "Raycast User",
+  "categories": ["Web"],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "index",
+      "title": "Search Current Site",
+      "description": "Search the current site open in Arc browser",
+      "mode": "view"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.48.0",
+    "run-applescript": "^6.1.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.5",
+    "@types/node": "~18.8.0",
+    "@types/react": "^18.0.28",
+    "eslint": "^8.15.0",
+    "typescript": "^4.7.4"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "lint": "ray lint"
+  }
+} 
