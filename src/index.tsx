@@ -507,8 +507,8 @@ export default function Command() {
               { text: `Using ${getSearchEngineName(searchEngine)}` },
               ...(timeFilter ? [{ text: getTimeFilterName(timeFilter), icon: Icon.Clock }] : []),
               ...(fileType ? [{ text: getFileTypeName(fileType), icon: Icon.Document }] : []),
-              ...(exactMatch ? [{ text: "Exact Match", icon: Icon.Quote }] : []),
-              { icon: Icon.Return, tooltip: "Press Return to search" }
+              ...(exactMatch ? [{ text: "Exact Match", icon: Icon.Text }] : []),
+              { icon: Icon.ArrowRight, tooltip: "Press Return to search" }
             ]}
             actions={
               <ActionPanel>
@@ -580,7 +580,7 @@ export default function Command() {
                 
                 <Action
                   title={exactMatch ? "Turn Off Exact Match" : "Turn On Exact Match"}
-                  icon={exactMatch ? Icon.Checkmark : Icon.Quote}
+                  icon={exactMatch ? Icon.Checkmark : Icon.Text}
                   onAction={() => {
                     setExactMatch(!exactMatch);
                     showToast({ 
@@ -614,7 +614,7 @@ export default function Command() {
                 { text: item.searchEngine ? getSearchEngineName(item.searchEngine) : getSearchEngineName(searchEngine) },
                 ...(item.timeFilter ? [{ icon: Icon.Clock, tooltip: getTimeFilterName(item.timeFilter) }] : []),
                 ...(item.fileType ? [{ icon: Icon.Document, tooltip: getFileTypeName(item.fileType) }] : []),
-                ...(item.exactMatch ? [{ icon: Icon.Quote, tooltip: "Exact Match" }] : []),
+                ...(item.exactMatch ? [{ icon: Icon.Text, tooltip: "Exact Match" }] : []),
                 { text: formatDate(item.timestamp), tooltip: "Search date" }
               ]}
               actions={
