@@ -96,4 +96,25 @@ If you encounter issues:
 - Ensure you have an active tab open in Arc
 - Check that you've granted necessary permissions to Raycast
 - If search history isn't loading, try restarting Raycast
-- If filters don't work as expected, try a different search engine (Google has the best filter support) 
+- If filters don't work as expected, try a different search engine (Google has the best filter support)
+
+### Extension Preferences
+
+Arc Site Search can be customized through the following preferences:
+
+#### Search Engine
+Choose your default search engine from the following options:
+- Google
+- DuckDuckGo
+- Bing
+- Yahoo
+- Baidu
+
+#### Auto-populate from Clipboard
+When enabled, the search field will automatically be populated with the current clipboard content when you open the extension. This can be useful for quickly searching for text you've just copied.
+
+You can configure these preferences by:
+1. Opening Raycast
+2. Typing "Extensions" and selecting "Manage Extensions"
+3. Finding "Arc Site Search" in your installed extensions
+4. Clicking the gear icon (⚙️) or selecting "Preferences" 

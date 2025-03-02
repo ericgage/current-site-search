@@ -42,6 +42,14 @@
               "value": "baidu"
             }
           ]
+        },
+        {
+          "name": "populateFromClipboard",
+          "title": "Auto-populate from Clipboard",
+          "description": "Automatically populate the search field with clipboard content",
+          "type": "checkbox",
+          "required": false,
+          "default": true
         }
       ]
     }

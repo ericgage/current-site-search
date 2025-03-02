@@ -16,7 +16,9 @@ declare namespace Preferences {
   /** Preferences accessible in the `index` command */
   export type Index = ExtensionPreferences & {
   /** Search Engine - The search engine to use for site searches */
-  "searchEngine": "google" | "duckduckgo" | "bing" | "yahoo" | "baidu"
+  "searchEngine": "google" | "duckduckgo" | "bing" | "yahoo" | "baidu",
+  /** Auto-populate from Clipboard - Automatically populate the search field with clipboard content */
+  "populateFromClipboard": boolean
 }
 }
 

@@ -14,6 +14,7 @@ interface SearchHistoryItem {
 
 interface Preferences {
   searchEngine: string;
+  populateFromClipboard: boolean;
 }
 
 // File type options
@@ -73,7 +74,7 @@ const searchEngines = {
       }
       
       // Build base URL with query and domain restriction
-      let url = `https://www.google.com/search?q=${encodeURIComponent(finalQuery)}+site%3A${domain}${fileTypeParam}`;
+      let url = `https://www.google.com/search?q=${encodeURIComponent(finalQuery + ' site:' + domain + fileTypeParam)}`;
       
       // Add time filter parameter if specified
       if (timeFilter) {
@@ -255,10 +256,12 @@ export default function Command() {
         const domain = extractDomain(url);
         setDomain(domain);
         
-        // Get clipboard text and set as initial search term
-        const clipboardText = await Clipboard.readText();
-        if (clipboardText) {
-          setSearchTerm(clipboardText.trim());
+        // Get clipboard text and set as initial search term if preference is enabled
+        if (preferences.populateFromClipboard) {
+          const clipboardText = await Clipboard.readText();
+          if (clipboardText) {
+            setSearchTerm(clipboardText.trim());
+          }
         }
         
         // Load search history
