@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ActionPanel, Action, List, showToast, Toast, open, Clipboard, Icon, Color, LocalStorage, getPreferenceValues } from "@raycast/api";
+import { ActionPanel, Action, List, showToast, Toast, open, Clipboard, Icon, Color, LocalStorage, getPreferenceValues, Form } from "@raycast/api";
 import { runAppleScript } from "run-applescript";
 
 interface SearchHistoryItem {
@@ -234,6 +234,7 @@ export default function Command() {
   const [timeFilter, setTimeFilter] = useState<string>("");
   const [fileType, setFileType] = useState<string>("");
   const [exactMatch, setExactMatch] = useState<boolean>(false);
+  const [isManualDomainInput, setIsManualDomainInput] = useState<boolean>(false);
 
   useEffect(() => {
     async function initialize() {
@@ -244,12 +245,8 @@ export default function Command() {
         const url = await getArcCurrentUrl();
         
         if (!url) {
-          showToast({
-            style: Toast.Style.Failure,
-            title: "Failed to get current URL",
-            message: "Make sure Arc browser is running with an active tab"
-          });
-          setError("Could not detect Arc browser or active tab");
+          setIsManualDomainInput(true);
+          setIsLoading(false);
           return;
         }
         
@@ -270,12 +267,12 @@ export default function Command() {
           setSearchHistory(JSON.parse(historyData));
         }
       } catch (error) {
+        setIsManualDomainInput(true);
         showToast({
           style: Toast.Style.Failure,
-          title: "Error",
+          title: "Error detecting domain",
           message: String(error)
         });
-        setError(String(error));
       } finally {
         setIsLoading(false);
       }
@@ -419,6 +416,70 @@ export default function Command() {
     });
   }
 
+  // Function to handle manual domain input
+  function handleManualDomainSubmit(newDomain: string) {
+    // Simple validation
+    if (!newDomain || !newDomain.includes('.')) {
+      showToast({
+        style: Toast.Style.Failure,
+        title: "Invalid domain",
+        message: "Please enter a valid domain (e.g., example.com)"
+      });
+      return;
+    }
+    
+    // Remove any protocol and path
+    let cleanDomain = newDomain.trim();
+    if (cleanDomain.startsWith('http://') || cleanDomain.startsWith('https://')) {
+      cleanDomain = cleanDomain.split('//')[1];
+    }
+    cleanDomain = cleanDomain.split('/')[0];
+    
+    setDomain(cleanDomain);
+    setIsManualDomainInput(false);
+    
+    showToast({
+      style: Toast.Style.Success,
+      title: "Domain set",
+      message: `Searching on: ${cleanDomain}`
+    });
+  }
+
+  // Function to change the current domain
+  function changeDomain() {
+    setIsManualDomainInput(true);
+  }
+
+  // If we need to show the manual domain input form
+  if (isManualDomainInput) {
+    return (
+      <Form
+        actions={
+          <ActionPanel>
+            <Action.SubmitForm
+              title="Set Domain"
+              onSubmit={(values) => handleManualDomainSubmit(values.domain as string)}
+            />
+            {domain && (
+              <Action
+                title="Cancel"
+                onAction={() => setIsManualDomainInput(false)}
+              />
+            )}
+          </ActionPanel>
+        }
+      >
+        <Form.TextField
+          id="domain"
+          title="Domain"
+          placeholder="Enter domain (e.g., example.com)"
+          defaultValue={domain || ""}
+          autoFocus
+        />
+      </Form>
+    );
+  }
+
   return (
     <List
       isLoading={isLoading}
@@ -456,6 +517,12 @@ export default function Command() {
                   icon={Icon.MagnifyingGlass}
                   onAction={() => performSearch()}
                   shortcut={{ modifiers: [], key: "return" }}
+                />
+                <Action
+                  title="Change Domain"
+                  icon={Icon.Globe}
+                  shortcut={{ modifiers: ["cmd"], key: "d" }}
+                  onAction={changeDomain}
                 />
                 <ActionPanel.Submenu title="Change Search Engine">
                   {Object.entries(searchEngines).map(([key, engine]) => (

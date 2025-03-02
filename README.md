@@ -5,6 +5,8 @@ A Raycast extension to search the current website open in Arc browser using Goog
 ## Features
 
 - **Automatic Domain Detection:** Automatically detects the domain of the current website open in Arc browser
+- **Manual Domain Input:** Enter any domain to search when automatic detection fails
+- **Change Domain:** Switch to searching a different site at any time
 - **Smart Search Term Suggestions:** Pre-populates the search field with clipboard content
 - **Simple Interface:** Clean search interface with search history tracking
 - **Quick Search:** Just press Return to execute your search
@@ -15,17 +17,32 @@ A Raycast extension to search the current website open in Arc browser using Goog
 
 ## Requirements
 
-- [Arc Browser](https://arc.net/) must be installed and running
+- [Arc Browser](https://arc.net/) must be installed and running (optional, if you want automatic domain detection)
 - [Raycast](https://raycast.com/)
 
 ## Usage
 
-1. Open a website in Arc browser
+1. Open a website in Arc browser (or skip this step to manually enter a domain)
 2. Trigger the "Search Current Site" command in Raycast
-3. Enter your search term (or use the pre-populated clipboard content)
-4. Optionally, apply search filters through the Action Panel (⌘K)
-5. Press Return to execute the search
-6. Alternatively, select from your previous searches
+3. If no site is detected, you'll be prompted to enter a domain
+4. Enter your search term (or use the pre-populated clipboard content)
+5. Optionally, apply search filters through the Action Panel (⌘K)
+6. Press Return to execute the search
+7. Alternatively, select from your previous searches
+
+### Domain Options
+
+#### Automatic Domain Detection
+By default, the extension will try to detect the domain of the current website open in Arc browser.
+
+#### Manual Domain Input
+If no browser or tab is detected, you'll be prompted to enter a domain manually.
+
+#### Changing the Domain
+To search a different domain:
+1. Press ⌘D or select "Change Domain" from the Action Panel
+2. Enter the new domain in the form that appears
+3. Click "Set Domain" to confirm
 
 ### Search Engine Options
 
