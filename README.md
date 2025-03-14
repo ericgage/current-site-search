@@ -19,6 +19,54 @@ A Raycast extension to search the current website open in Arc browser using Goog
 
 - [Arc Browser](https://arc.net/) must be installed and running (optional, if you want automatic domain detection)
 - [Raycast](https://raycast.com/)
+- Node.js and npm for development and building
+
+## Installation
+
+### Option 1: Install from the Raycast Store
+*Coming soon*
+
+### Option 2: Build and Install Manually
+1. Clone this repository
+2. Navigate to the project directory
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Build the extension:
+   ```bash
+   npm run build
+   ```
+5. Import the extension into Raycast:
+   - Open Raycast
+   - Type "Import Extension"
+   - Select the `dist` folder from this project
+
+## Development
+
+### Running in Development Mode
+To run the extension in development mode with hot reloading:
+
+1. Clone this repository
+2. Navigate to the project directory
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+5. Open Raycast and find the extension under "Development"
+
+### Building for Production
+To build the extension for production:
+
+```bash
+npm run build
+```
+
+This will create a `dist` folder containing the packaged extension.
 
 ## Usage
 
@@ -114,6 +162,11 @@ If you encounter issues:
 - Check that you've granted necessary permissions to Raycast
 - If search history isn't loading, try restarting Raycast
 - If filters don't work as expected, try a different search engine (Google has the best filter support)
+
+### Development Troubleshooting
+- If you encounter TypeScript errors, try running `npm run lint` to identify issues
+- For AppleScript permissions issues, make sure Raycast has necessary permissions in System Preferences > Security & Privacy > Automation
+- If changes aren't reflecting in dev mode, try restarting the dev server
 
 ### Extension Preferences
 
