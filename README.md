@@ -39,8 +39,9 @@ A Raycast extension to search the current website open in Arc browser using Goog
    ```
 5. Import the extension into Raycast:
    - Open Raycast
-   - Type "Import Extension"
-   - Select the `dist` folder from this project
+   - Type "Import Extension" in the search bar
+   - When the file picker opens, select your extension's directory (the root folder of this project)
+   - Raycast will automatically find and import the compiled extension
 
 ## Development
 
@@ -57,7 +58,9 @@ To run the extension in development mode with hot reloading:
    ```bash
    npm run dev
    ```
-5. Open Raycast and find the extension under "Development"
+5. Access the extension in Raycast:
+   - Press `⌘+Space` to open Raycast
+   - Type `Search Current Site` and you should see your extension appear
 
 ### Building for Production
 To build the extension for production:
@@ -66,7 +69,7 @@ To build the extension for production:
 npm run build
 ```
 
-This will create a `dist` folder containing the packaged extension.
+When you're satisfied with your changes, build and import as described above to create a permanent installation.
 
 ## Usage
 
